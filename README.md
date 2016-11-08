@@ -14,7 +14,7 @@ This package can be use in [Jupyter Notebook](https://jupyter.org/).
 
 You can install me using `pip` or `easy_install`. For example, from the command line:
 
-    $ pip install ibm-quantum-experience
+    $ pip install IBMQuantumExperience
 
 ### Getting Started
 
