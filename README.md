@@ -15,6 +15,21 @@ This package can be use in [Jupyter Notebook](https://jupyter.org/).
 You can install me using `pip` or `easy_install`. For example, from the command line:
 
     $ pip install IBMQuantumExperience
+    
+To install the package in Jupyter, you have to run in a Notebook:
+
+```python
+import pip
+def install(package):
+   pip.main(['install', package])
+install('IBMQuantumExperience') 
+```
+
+or, if you want the standard output, one could even use the exclamation bang:
+
+```python
+! pip install IBMQuantumExperience
+```
 
 ### Getting Started
 
