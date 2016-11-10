@@ -7,6 +7,7 @@ This package can be use in [Jupyter Notebook](https://jupyter.org/).
 * [Installation](#installation)
 * [Getting Started](#getting-started)
 * [Methods](#methods)
+* [GIST Jupyter](#jupyter)
 * [License](#license)
 * [Reference](#reference)
 
@@ -51,10 +52,16 @@ api = IBMQuantumExperience("email@email.com", "p4Ssw0rD")
 
 #### Codes
 
-To get the information of a Code, you only need the codeId:
+To get the information of a Code, including the last executions about this Code, you only need the codeId:
 
 ```python
 api.getCode("idCode")
+```
+
+To get the information about the last Codes, including the last executions about these Codes, you only need call:
+
+```python
+api.getLastCodes()
 ```
 
 #### Execution
@@ -69,6 +76,79 @@ To get only the Result about a specific Execution of a Code, you only need the e
 
 ```python
 api.getResultFromExecution("idExecution")
+```
+
+#### Jupyter
+
+To show the result and the code in Jupyter, you can use the next snippet that has some visual representation functions:
+
+```
+# USER, PLEASE SET CONFIG:
+email="_EMAIL_"
+password="_PASSWORD_"
+# ---- UTILS -----
+from IBMQuantumExperience import IBMQuantumExperience
+from IPython.display import Image, display
+import matplotlib.pyplot as plt
+import numpy as np
+%matplotlib inline
+api = IBMQuantumExperience(email, password)
+def showImageCode(idCode):
+    if (idCode):
+        code = api.getImageCode(idCode)
+        if (code.get('error', None)):
+            print("Fail to recovery the Code")
+        else:
+            display(Image(code['url']))
+    else:
+        print("Invalid IdCode")
+def printBars(values, labels):
+    N = len(values)
+    ind = np.arange(N)  # the x locations for the groups
+    width = 0.35       # the width of the bars
+    fig, ax = plt.subplots()
+    rects1 = ax.bar(ind, values, width, color='r')
+    # add some text for labels, title and axes ticks
+    ax.set_ylabel('Probabilities')
+    ax.set_xticks(ind + (width/2.))
+    ax.set_xticklabels(labels)
+    def autolabel(rects):
+        # attach some text labels
+        for rect in rects:
+            height = rect.get_height()
+            ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
+                    '%f' % float(height),
+                    ha='center', va='bottom')
+    autolabel(rects1)
+    plt.show()
+def showResultsByExecution(executionRaw):
+    result = executionRaw.get('result', {})
+    data = result.get('data', {})
+    print('Execution in ' + executionRaw.get('deviceRunType', 'Unknown') + ' at ' + executionRaw.get('endDate', 'Unknown'))
+    if (data.get('p', None)):
+        values = data['p']['values']
+        labels = data['p']['labels']
+        printBars(values, labels)
+    else:
+        print("Not plotted. Results are: "+str(executionRaw))
+def showResultsByIdExecution(idExecution):
+    execution = api.getResultFromExecution(idExecution)
+    if (execution.get('measure', None)):
+        values = execution['measure']['values']
+        labels = execution['measure']['labels']
+        printBars(values, labels)
+    else:
+        print("Not plotted. Results are: "+str(execution))
+def showLastCodes():
+    codes = api.getLastCodes()
+    for code in codes:
+        print("--------------------------------")
+        print("Code " + code.get('name', 'Unknown'))
+        print(" ")
+        showImageCode(code.get('id', None))
+        print("------- Executions -------------")
+        for execution in code.get('executions', []):
+            showResultsByExecution(execution)
 ```
 
 ## License

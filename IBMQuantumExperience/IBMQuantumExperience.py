@@ -65,4 +65,15 @@ class IBMQuantumExperience():
         return result
 
     def getCode(self, id):
-        return self.req.get('/Codes/' + id, '')
+        code = self.req.get('/Codes/' + id, '')
+        executions = self.req.get('/Codes/' + id + '/executions', 'filter={"limit":3}')
+        if (isinstance(executions, list)):
+            code["executions"] = executions
+        return code
+
+    def getImageCode(self, id):
+        return self.req.get('/Codes/' + id + '/export/png/url', '')
+
+
+    def getLastCodes(self):
+        return self.req.get('/users/' + self.req.credential.getUserId() + '/codes/lastest', '&includeExecutions=true')['codes']
