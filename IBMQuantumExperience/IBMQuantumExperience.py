@@ -1,16 +1,26 @@
 import requests
+import logging
 
-baseURL = 'https://qcwi-develop.mybluemix.net/api'
+configBase = {
+    'url': 'https://quantumexperience.ng.bluemix.net/api'
+}
 
 class _Credentials():
-    def __init__(self, email, password):
+    def __init__(self, email, password, config=None):
         self.email = email
         self.password = password
+        if (config and config.get('url', None)):
+            self.config = config
+        else:
+            self.config = configBase
+
         self.obtainToken()
 
     def obtainToken(self):
-        self.dataCredentials = requests.post(baseURL + "/users/login",
+        self.dataCredentials = requests.post(self.config.get('url') + "/users/login",
                                              data={'email': self.email, 'password': self.password}).json()
+        if(not self.getToken()):
+            logging.error('Not user or password valid')
 
     def getToken(self):
         return self.dataCredentials.get('id', None)
@@ -18,10 +28,13 @@ class _Credentials():
     def getUserId(self):
         return self.dataCredentials.get('userId', None)
 
+    def getConfig(self):
+        return self.config
+
 
 class _Request():
-    def __init__(self, email, password):
-        self.credential = _Credentials(email, password)
+    def __init__(self, email, password, config=None):
+        self.credential = _Credentials(email, password, config)
 
     def checkToken(self, respond):
         if (respond.status_code == 401):
@@ -30,23 +43,30 @@ class _Request():
         return True
 
     def post(self, path, params, data):
-        respond = requests.post(baseURL + path + '?access_token=' + self.credential.getToken() + params, data=data)
+        respond = requests.post(self.credential.config['url'] + path + '?access_token=' + self.credential.getToken() + params, data=data)
         if (not self.checkToken(respond)):
-            respond = requests.post(baseURL + path + '?access_token=' + self.credential.getToken() + params, data=data)
+            respond = requests.post(self.credential.config['url'] + path + '?access_token=' + self.credential.getToken() + params, data=data)
         return respond.json()
 
     def get(self, path, params):
-        respond = requests.get(baseURL + path + '?access_token=' + self.credential.getToken() + params)
+        respond = requests.get(self.credential.config['url'] + path + '?access_token=' + self.credential.getToken() + params)
         if (not self.checkToken(respond)):
-            respond = requests.get(baseURL + path + '?access_token=' + self.credential.getToken() + params)
+            respond = requests.get(self.credential.config['url'] + path + '?access_token=' + self.credential.getToken() + params)
         return respond.json()
 
 
 class IBMQuantumExperience():
-    def __init__(self, email, password):
-        self.req = _Request(email, password)
+    def __init__(self, email, password, config=None):
+        self.req = _Request(email, password, config)
+
+    def _checkCredentials(self):
+        if (not self.req.credential.getToken()):
+            return False
+        return True
 
     def getExecution(self, id):
+        if (not self._checkCredentials()):
+            return None
         execution = self.req.get('/Executions/' + id, '')
         if (execution["codeId"]):
             url = self.req.get('/Codes/' + execution["codeId"] + '/export/png/url', '')
@@ -54,6 +74,8 @@ class IBMQuantumExperience():
         return execution
 
     def getResultFromExecution(self, id):
+        if (not self._checkCredentials()):
+            return None
         execution = self.req.get('/Executions/' + id, '')
         result = {}
         if (execution["result"]):
@@ -65,6 +87,8 @@ class IBMQuantumExperience():
         return result
 
     def getCode(self, id):
+        if (not self._checkCredentials()):
+            return None
         code = self.req.get('/Codes/' + id, '')
         executions = self.req.get('/Codes/' + id + '/executions', 'filter={"limit":3}')
         if (isinstance(executions, list)):
@@ -72,8 +96,12 @@ class IBMQuantumExperience():
         return code
 
     def getImageCode(self, id):
+        if (not self._checkCredentials()):
+            return None
         return self.req.get('/Codes/' + id + '/export/png/url', '')
 
 
     def getLastCodes(self):
+        if (not self._checkCredentials()):
+            return None
         return self.req.get('/users/' + self.req.credential.getUserId() + '/codes/lastest', '&includeExecutions=true')['codes']

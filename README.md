@@ -42,11 +42,20 @@ First, import our SDK:
 from IBMQuantumExperience import IBMQuantumExperience
 ```
 
-Then, initialize your IBM Quantum Experience connection by supplying your *email* and *password*:
+Then, initialize your IBM Quantum Experience connection by supplying your *email* and *password*. An optional object knows as *config* has several extra options to customize, like the url of the API:
 
 ```python
-api = IBMQuantumExperience("email@email.com", "p4Ssw0rD")
+api = IBMQuantumExperience("email@email.com", "p4Ssw0rD", config)
 ```
+
+By default, the config parameter is defined like:
+
+```
+config = {
+   "url": 'https://quantumexperience.ng.bluemix.net/api'
+}
+```
+
 
 ### Methods
 
