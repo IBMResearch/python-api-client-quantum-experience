@@ -1,5 +1,6 @@
 import requests
 import logging
+import time
 
 configBase = {
     'url': 'https://quantumexperience.ng.bluemix.net/api'
@@ -42,13 +43,13 @@ class _Request():
             return False
         return True
 
-    def post(self, path, params, data):
+    def post(self, path, params='', data={}):
         respond = requests.post(self.credential.config['url'] + path + '?access_token=' + self.credential.getToken() + params, data=data)
         if (not self.checkToken(respond)):
             respond = requests.post(self.credential.config['url'] + path + '?access_token=' + self.credential.getToken() + params, data=data)
         return respond.json()
 
-    def get(self, path, params):
+    def get(self, path, params=''):
         respond = requests.get(self.credential.config['url'] + path + '?access_token=' + self.credential.getToken() + params)
         if (not self.checkToken(respond)):
             respond = requests.get(self.credential.config['url'] + path + '?access_token=' + self.credential.getToken() + params)
@@ -100,8 +101,51 @@ class IBMQuantumExperience():
             return None
         return self.req.get('/Codes/' + id + '/export/png/url', '')
 
-
     def getLastCodes(self):
         if (not self._checkCredentials()):
             return None
         return self.req.get('/users/' + self.req.credential.getUserId() + '/codes/lastest', '&includeExecutions=true')['codes']
+
+    '''
+    def runExperiment(self, qasm, shots, device, timeout=30):
+        if (not self._checkCredentials()):
+            return None
+        data = {}
+        data['qasm'] = qasm
+        data['shots'] = shots
+        data['device'] = device
+        execution = self.req.post('/qasm/', '', data)["execution"]
+        status = execution["status"]["id"]
+        idExecution = execution["id"]
+        result = {}
+        respond = {}
+        respond["status"] = status
+        respond["idExecution"] = idExecution
+        if (status == "DONE"):
+            if (execution["result"]):
+                if (execution["result"]["data"].get('p', None)):
+                    result["measure"] = execution["result"]["data"]["p"]
+                if (execution["result"]["data"].get('valsxyz', None)):
+                    result["bloch"] = execution["result"]["data"]["valsxyz"]
+                respond["result"] = result
+                return respond
+        elif (status == "ERROR"):
+            return respond
+        else:
+            if (timeout):
+                if (timeout > 300):
+                    timeout = 300
+                for i in range (1, timeout):
+                    print("Waiting for results...")
+                    result = self.getResultFromExecution(idExecution)
+                    if (len(result) > 0):
+                        respond["result"] = result
+                        return respond
+                    else:
+                        time.sleep(1)
+                return respond
+            else:
+                return respond
+    '''
+
+
