@@ -1,6 +1,6 @@
 # Python SDK IBM Quantum Experience
 
-The official SDK to use [IBM Quantum Experience](https://quantumexperience.ng.bluemix.net/) in Python. 
+The official SDK to use [IBM Quantum Experience](https://quantumexperience.ng.bluemix.net/) in Python.
 
 This package can be use in [Jupyter Notebook](https://jupyter.org/).
 
@@ -16,14 +16,14 @@ This package can be use in [Jupyter Notebook](https://jupyter.org/).
 You can install me using `pip` or `easy_install`. For example, from the command line:
 
     $ pip install IBMQuantumExperience
-    
+
 To install the package in Jupyter, you have to run in a Notebook:
 
 ```python
 import pip
 def install(package):
    pip.main(['install', package])
-install('IBMQuantumExperience') 
+install('IBMQuantumExperience')
 ```
 
 or, if you want the standard output, one could even use the exclamation bang:
@@ -85,6 +85,14 @@ To get only the Result about a specific Execution of a Code, you only need the e
 
 ```python
 api.getResultFromExecution("idExecution")
+```
+
+#### Running QASM 2.0
+
+> :warning: This method is not yet available
+
+```python
+api.runExperiment('qasmCode', shots, device, timeout=30)
 ```
 
 #### Jupyter
