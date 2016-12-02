@@ -1,6 +1,7 @@
 import requests
 import logging
 import time
+import datetime
 
 configBase = {
     'url': 'https://quantumexperience.ng.bluemix.net/api'
@@ -79,7 +80,7 @@ class IBMQuantumExperience():
             return None
         execution = self.req.get('/Executions/' + id, '')
         result = {}
-        if (execution["result"]):
+        if ('result' in execution):
             if (execution["result"]["data"].get('p', None)):
                 result["measure"] = execution["result"]["data"]["p"]
             if (execution["result"]["data"].get('valsxyz', None)):
@@ -106,15 +107,20 @@ class IBMQuantumExperience():
             return None
         return self.req.get('/users/' + self.req.credential.getUserId() + '/codes/lastest', '&includeExecutions=true')['codes']
 
-    '''
-    def runExperiment(self, qasm, shots, device, timeout=30):
+
+    def runExperiment(self, qasm, shots, device, name=None, timeout=60):
         if (not self._checkCredentials()):
             return None
         data = {}
         data['qasm'] = qasm
         data['shots'] = shots
         data['device'] = device
-        execution = self.req.post('/qasm/', '', data)["execution"]
+        data['deviceRunType'] = 'real'
+        data['codeType'] = 'QASM2'
+        if name is None:
+            name = 'Experiment #' + datetime.date.today().strftime("%Y%m%d%H%M%S")
+        data['name'] = name
+        execution = self.req.post('/codes/execute','&shots=' + str(shots) + '&deviceRunType=real', data)
         status = execution["status"]["id"]
         idExecution = execution["id"]
         result = {}
@@ -142,10 +148,7 @@ class IBMQuantumExperience():
                         respond["result"] = result
                         return respond
                     else:
-                        time.sleep(1)
+                        time.sleep(2)
                 return respond
             else:
                 return respond
-    '''
-
-
