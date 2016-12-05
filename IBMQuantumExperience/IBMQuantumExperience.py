@@ -108,14 +108,11 @@ class IBMQuantumExperience():
         return self.req.get('/users/' + self.req.credential.getUserId() + '/codes/lastest', '&includeExecutions=true')['codes']
 
 
-    def runExperiment(self, qasm, shots, device, name=None, timeout=60):
+    def runExperiment(self, qasm, shots, name=None, timeout=60):
         if (not self._checkCredentials()):
             return None
         data = {}
         data['qasm'] = qasm
-        data['shots'] = shots
-        data['device'] = device
-        data['deviceRunType'] = 'real'
         data['codeType'] = 'QASM2'
         if name is None:
             name = 'Experiment #' + datetime.date.today().strftime("%Y%m%d%H%M%S")

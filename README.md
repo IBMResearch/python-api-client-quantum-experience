@@ -90,9 +90,10 @@ api.getResultFromExecution("idExecution")
 #### Running QASM 2.0
 
 > :warning: This method is not yet available
+To execute a QASM 2.0 experiment:
 
 ```python
-api.runExperiment('qasmCode', shots, device, timeout=30)
+api.runExperiment(qasm, shots, name=None, timeout=60)
 ```
 
 #### Jupyter
