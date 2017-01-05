@@ -108,22 +108,27 @@ class IBMQuantumExperience():
         return self.req.get('/users/' + self.req.credential.getUserId() + '/codes/lastest', '&includeExecutions=true')['codes']
 
 
-    def runExperiment(self, qasm, shots, name=None, timeout=60):
+    def runExperiment(self, qasm, device, shots, name=None, timeout=60):
         if (not self._checkCredentials()):
             return None
         data = {}
+        qasm = qasm.replace('IBMQASM 2.0;', '')
         data['qasm'] = qasm
         data['codeType'] = 'QASM2'
         if name is None:
             name = 'Experiment #' + datetime.date.today().strftime("%Y%m%d%H%M%S")
         data['name'] = name
-        execution = self.req.post('/codes/execute','&shots=' + str(shots) + '&deviceRunType=real', data)
+        deviceType = 'sim_trivial_2'
+        if (device == 'real'):
+            deviceType = 'real'
+        execution = self.req.post('/codes/execute','&shots=' + str(shots) + '&deviceRunType=' + deviceType, data)
         status = execution["status"]["id"]
         idExecution = execution["id"]
         result = {}
         respond = {}
         respond["status"] = status
         respond["idExecution"] = idExecution
+        respond["idCode"] = execution["codeId"]
         if (status == "DONE"):
             if (execution["result"]):
                 if (execution["result"]["data"].get('p', None)):
@@ -142,6 +147,7 @@ class IBMQuantumExperience():
                     print("Waiting for results...")
                     result = self.getResultFromExecution(idExecution)
                     if (len(result) > 0):
+                        respond["status"] = 'DONE'
                         respond["result"] = result
                         return respond
                     else:

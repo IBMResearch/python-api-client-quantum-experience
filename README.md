@@ -89,12 +89,23 @@ api.getResultFromExecution("idExecution")
 
 #### Running QASM 2.0
 
-> :warning: This method is not yet available
 To execute a QASM 2.0 experiment:
 
 ```python
-api.runExperiment(qasm, shots, name=None, timeout=60)
+api.runExperiment(qasm, device, shots, name=None, timeout=60)
 ```
+
+- **qasm**: The QASM 2.0 code to run. Eg: 
+``` qasm = 'IBMQASM 2.0;\n\ninclude "qelib1.inc";\nqreg q[5];\ncreg c[5];\nh q[0];\ncx q[0],q[2];\nmeasure q[0] -> c[0];\nmeasure q[2] -> c[1];\n'``
+- **device**: Type of device to run the experiment. Only two option possibles: *sim* or *real*. Eg:
+```device = 'real' ```
+- **shots**: Number of shots of the experiments. Maximum 8192 shots. Eg:
+```shots = 1024 ```
+- **name**: Name of the experiment. This paramater is optional, by default the name will be 'Experiment \#YmdHMS'. Eg:
+```name = 'bell state experiment'``
+- **timeout**: Time to wait for the result. The maximum timeout is 300. If the timeout is reached, you obtain the executionId to get the result with the getResultFromExecution method in the future. Eg:
+```timeout = 120``
+
 
 #### Jupyter
 

@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(name = 'IBMQuantumExperience',
       packages = ['IBMQuantumExperience'], # this must be the same as the name above
-      version='0.1.4',
+      version='0.1.5',
       author='IBM Research Emergent Solutions',
       author_email='fmartinfdez@gmail.com',
       url = 'https://github.com/IBMResearch/python-sdk-quantum-experience',
