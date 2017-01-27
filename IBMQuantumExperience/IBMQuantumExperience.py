@@ -1,5 +1,4 @@
 import requests
-import logging
 import time
 import datetime
 
@@ -22,7 +21,7 @@ class _Credentials():
         self.dataCredentials = requests.post(self.config.get('url') + "/users/login",
                                              data={'email': self.email, 'password': self.password}).json()
         if(not self.getToken()):
-            logging.error('Not user or password valid')
+            print('ERROR: Not user or password valid')
 
     def getToken(self):
         return self.dataCredentials.get('id', None)
