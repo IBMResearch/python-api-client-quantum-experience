@@ -122,36 +122,40 @@ class IBMQuantumExperience():
         if (device == 'real'):
             deviceType = 'real'
         execution = self.req.post('/codes/execute','&shots=' + str(shots) + '&deviceRunType=' + deviceType, data)
-        status = execution["status"]["id"]
-        idExecution = execution["id"]
-        result = {}
         respond = {}
-        respond["status"] = status
-        respond["idExecution"] = idExecution
-        respond["idCode"] = execution["codeId"]
-        if (status == "DONE"):
-            if (execution["result"]):
-                if (execution["result"]["data"].get('p', None)):
-                    result["measure"] = execution["result"]["data"]["p"]
-                if (execution["result"]["data"].get('valsxyz', None)):
-                    result["bloch"] = execution["result"]["data"]["valsxyz"]
-                respond["result"] = result
-                return respond
-        elif (status == "ERROR"):
-            return respond
-        else:
-            if (timeout):
-                if (timeout > 300):
-                    timeout = 300
-                for i in range (1, timeout):
-                    print("Waiting for results...")
-                    result = self.getResultFromExecution(idExecution)
-                    if (len(result) > 0):
-                        respond["status"] = 'DONE'
-                        respond["result"] = result
-                        return respond
-                    else:
-                        time.sleep(2)
+        try:
+            status = execution["status"]["id"]
+            idExecution = execution["id"]
+            result = {}
+            respond["status"] = status
+            respond["idExecution"] = idExecution
+            respond["idCode"] = execution["codeId"]
+            if (status == "DONE"):
+                if (execution["result"]):
+                    if (execution["result"]["data"].get('p', None)):
+                        result["measure"] = execution["result"]["data"]["p"]
+                    if (execution["result"]["data"].get('valsxyz', None)):
+                        result["bloch"] = execution["result"]["data"]["valsxyz"]
+                    respond["result"] = result
+                    return respond
+            elif (status == "ERROR"):
                 return respond
             else:
-                return respond
+                if (timeout):
+                    if (timeout > 300):
+                        timeout = 300
+                    for i in range (1, timeout):
+                        print("Waiting for results...")
+                        result = self.getResultFromExecution(idExecution)
+                        if (len(result) > 0):
+                            respond["status"] = 'DONE'
+                            respond["result"] = result
+                            return respond
+                        else:
+                            time.sleep(2)
+                    return respond
+                else:
+                    return respond
+        except Exception:
+            respond["error"] = execution
+            return respond
