@@ -7,9 +7,8 @@ configBase = {
 }
 
 class _Credentials():
-    def __init__(self, email, password, config=None):
-        self.email = email
-        self.password = password
+    def __init__(self, token, config=None):
+        self.tokenUnique = token
         if (config and config.get('url', None)):
             self.config = config
         else:
@@ -18,10 +17,11 @@ class _Credentials():
         self.obtainToken()
 
     def obtainToken(self):
-        self.dataCredentials = requests.post(self.config.get('url') + "/users/login",
-                                             data={'email': self.email, 'password': self.password}).json()
+        self.dataCredentials = requests.post(self.config.get('url') + "/users/loginWithToken",
+                                             data={'apiToken': self.tokenUnique}).json()
+
         if(not self.getToken()):
-            print('ERROR: Not user or password valid')
+            print('ERROR: Not token valid')
 
     def getToken(self):
         return self.dataCredentials.get('id', None)
@@ -34,8 +34,8 @@ class _Credentials():
 
 
 class _Request():
-    def __init__(self, email, password, config=None):
-        self.credential = _Credentials(email, password, config)
+    def __init__(self, token, config=None):
+        self.credential = _Credentials(token, config)
 
     def checkToken(self, respond):
         if (respond.status_code == 401):
@@ -57,8 +57,8 @@ class _Request():
 
 
 class IBMQuantumExperience():
-    def __init__(self, email, password, config=None):
-        self.req = _Request(email, password, config)
+    def __init__(self, token, config=None):
+        self.req = _Request(token, config)
 
     def _checkCredentials(self):
         if (not self.req.credential.getToken()):

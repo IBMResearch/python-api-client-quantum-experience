@@ -42,10 +42,10 @@ First, import our SDK:
 from IBMQuantumExperience import IBMQuantumExperience
 ```
 
-Then, initialize your IBM Quantum Experience connection by supplying your *email* and *password*. An optional object knows as *config* has several extra options to customize, like the url of the API:
+Then, initialize your IBM Quantum Experience connection by supplying your *token*. You can obtain the token from **Account** area of *Quantum Experience Platform* in *Personal Access Token* section. An optional object knows as *config* has several extra options to customize, like the url of the API:
 
 ```python
-api = IBMQuantumExperience("email@email.com", "p4Ssw0rD", config)
+api = IBMQuantumExperience("token", config)
 ```
 
 By default, the config parameter is defined like:
@@ -55,7 +55,6 @@ config = {
    "url": 'https://quantumexperience.ng.bluemix.net/api'
 }
 ```
-
 
 ### Methods
 
@@ -113,15 +112,14 @@ To show the result and the code in Jupyter, you can use the next snippet that ha
 
 ```
 # USER, PLEASE SET CONFIG:
-email="_EMAIL_"
-password="_PASSWORD_"
+token="_TOKEN_"
 # ---- UTILS -----
 from IBMQuantumExperience import IBMQuantumExperience
 from IPython.display import Image, display
 import matplotlib.pyplot as plt
 import numpy as np
 %matplotlib inline
-api = IBMQuantumExperience(email, password)
+api = IBMQuantumExperience(token)
 def showImageCode(idCode):
     if (idCode):
         code = api.getImageCode(idCode)
@@ -184,7 +182,7 @@ def showLastCodes():
 
 MIT License
 
-Copyright (c) 2016 IBM Research Emergent Solutions
+Copyright (c) 2017 IBM Research Emergent Solutions
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
