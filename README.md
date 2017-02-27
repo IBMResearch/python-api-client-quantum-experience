@@ -96,7 +96,7 @@ api.runExperiment(qasm, device, shots, name=None, timeout=60)
 
 - **qasm**: The QASM 2.0 code to run. Eg: 
 ``` qasm = 'IBMQASM 2.0;\n\ninclude "qelib1.inc";\nqreg q[5];\ncreg c[5];\nh q[0];\ncx q[0],q[2];\nmeasure q[0] -> c[0];\nmeasure q[2] -> c[1];\n'``
-- **device**: Type of device to run the experiment. Only two option possibles: *sim* or *real*. Eg:
+- **device**: Type of device to run the experiment. Only two option possibles: *simulator* or *real*. Eg:
 ```device = 'real' ```
 - **shots**: Number of shots of the experiments. Maximum 8192 shots. Eg:
 ```shots = 1024 ```
@@ -104,6 +104,38 @@ api.runExperiment(qasm, device, shots, name=None, timeout=60)
 ```name = 'bell state experiment'``
 - **timeout**: Time to wait for the result. The maximum timeout is 300. If the timeout is reached, you obtain the executionId to get the result with the getResultFromExecution method in the future. Eg:
 ```timeout = 120``
+
+#### Running Jobs QASM 2.0
+
+To execute jobs about QASM 2.0 experiment:
+
+```python
+api.runJobs(qasms, device, shots, maxCredits)
+```
+
+- **qasms**: A list of objects with the QASM 2.0 information. Eg: 
+``` [
+      { 'qasm': 'IBMQASM 2.0;\n\ninclude "qelib1.inc";\nqreg q[5];\ncreg c[5];\nh q[0];\ncx q[0],q[2];\nmeasure q[0] -> c[0];\nmeasure q[2] -> c[1];\n'},
+      { 'qasm': 'IBMQASM 2.0;\n\ninclude "qelib1.inc";\nqreg q[5];\ncreg c[5];\nx q[0];\nmeasure q[0] -> c[0];\n'}
+    ]
+```
+- **device**: Type of device to run the experiment. Only two option possibles: *simulator* or *real*. Eg:
+```device = 'real' ```
+- **shots**: Number of shots of the experiments. Maximum 8192 shots. Eg:
+```shots = 1024 ```
+- **maxCredits**: Maximum number of the credits to spend in the executions. If the executions are more expensives, the job is aborted. Eg:
+```maxCredits = 3```
+
+To get job information:
+
+```python
+api.getJob(idJob)
+```
+
+- **idJob**: The identifier of the Job. Eg: 
+``` 
+    idJob = '9de64f58316db3eb6db6da53bf9135ff'
+```
 
 
 #### Jupyter

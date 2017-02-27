@@ -1,6 +1,7 @@
 import requests
 import time
 import datetime
+import json
 
 configBase = {
     'url': 'https://quantumexperience.ng.bluemix.net/api'
@@ -44,9 +45,10 @@ class _Request():
         return True
 
     def post(self, path, params='', data={}):
-        respond = requests.post(self.credential.config['url'] + path + '?access_token=' + self.credential.getToken() + params, data=data)
+        headers = {'Content-Type': 'application/json'}
+        respond = requests.post(self.credential.config['url'] + path + '?access_token=' + self.credential.getToken() + params, data=data, headers=headers)
         if (not self.checkToken(respond)):
-            respond = requests.post(self.credential.config['url'] + path + '?access_token=' + self.credential.getToken() + params, data=data)
+            respond = requests.post(self.credential.config['url'] + path + '?access_token=' + self.credential.getToken() + params, data=data, headers=headers)
         return respond.json()
 
     def get(self, path, params=''):
@@ -120,7 +122,7 @@ class IBMQuantumExperience():
         deviceType = 'sim_trivial_2'
         if (device == 'real'):
             deviceType = 'real'
-        execution = self.req.post('/codes/execute','&shots=' + str(shots) + '&deviceRunType=' + deviceType, data)
+        execution = self.req.post('/codes/execute','&shots=' + str(shots) + '&deviceRunType=' + deviceType, json.dumps(data))
         respond = {}
         try:
             status = execution["status"]["id"]
@@ -158,3 +160,26 @@ class IBMQuantumExperience():
         except Exception:
             respond["error"] = execution
             return respond
+
+    def runJob(self, qasms, device='simulator', shots=1, maxCredits=3):
+        if (not self._checkCredentials()):
+            return None
+        data = {}
+        for qasm in qasms:
+            qasm['qasm'] = qasm['qasm'].replace('IBMQASM 2.0;', '')
+        data['qasms'] = qasms
+        data['shots'] = shots
+        data['maxCredits'] = maxCredits
+        data['backend'] = {}
+        data['backend']['name'] = 'simulator'
+        if (device == 'real'):
+            data['backend']['name'] = 'real'
+
+        job = self.req.post('/Jobs', data=json.dumps(data))
+        return job
+
+    def getJob(self, idJob):
+        if (not self._checkCredentials() or not idJob):
+            return None
+        job = self.req.get('/Jobs/'+idJob)
+        return job
