@@ -114,10 +114,11 @@ api.runJobs(qasms, device, shots, maxCredits)
 ```
 
 - **qasms**: A list of objects with the QASM 2.0 information. Eg: 
-``` [
-      { 'qasm': 'IBMQASM 2.0;\n\ninclude "qelib1.inc";\nqreg q[5];\ncreg c[5];\nh q[0];\ncx q[0],q[2];\nmeasure q[0] -> c[0];\nmeasure q[2] -> c[1];\n'},
-      { 'qasm': 'IBMQASM 2.0;\n\ninclude "qelib1.inc";\nqreg q[5];\ncreg c[5];\nx q[0];\nmeasure q[0] -> c[0];\n'}
-    ]
+```
+[
+   { 'qasm': 'IBMQASM 2.0;\n\ninclude "qelib1.inc";\nqreg q[5];\ncreg c[5];\nh q[0];\ncx q[0],q[2];\nmeasure q[0] -> c[0];\nmeasure q[2] -> c[1];\n'},
+   { 'qasm': 'IBMQASM 2.0;\n\ninclude "qelib1.inc";\nqreg q[5];\ncreg c[5];\nx q[0];\nmeasure q[0] -> c[0];\n'}
+]
 ```
 - **device**: Type of device to run the experiment. Only two option possibles: *simulator* or *real*. Eg:
 ```device = 'real' ```
