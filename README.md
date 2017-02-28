@@ -105,7 +105,7 @@ api.runExperiment(qasm, device, shots, name=None, timeout=60)
 - **timeout**: Time to wait for the result. The maximum timeout is 300. If the timeout is reached, you obtain the executionId to get the result with the getResultFromExecution method in the future. Eg:
 ```timeout = 120``
 
-#### Running Jobs QASM 2.0
+#### Running Jobs QASM 2.0 [IN PROGRESS... DEVELOP and only for simulators]
 
 To execute jobs about QASM 2.0 experiment:
 
