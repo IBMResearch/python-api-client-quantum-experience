@@ -1,6 +1,6 @@
-# Python SDK IBM Quantum Experience
+# Python API Client IBM Quantum Experience
 
-The official SDK to use [IBM Quantum Experience](https://quantumexperience.ng.bluemix.net/) in Python.
+The official API Client to use [IBM Quantum Experience](https://quantumexperience.ng.bluemix.net/) in Python.
 
 This package can be use in [Jupyter Notebook](https://jupyter.org/).
 
@@ -36,7 +36,7 @@ or, if you want the standard output, one could even use the exclamation bang:
 
 Now it's time to begin doing real work with Python and IBM Quantum Experience.
 
-First, import our SDK:
+First, import our API Client:
 
 ```python
 from IBMQuantumExperience import IBMQuantumExperience
